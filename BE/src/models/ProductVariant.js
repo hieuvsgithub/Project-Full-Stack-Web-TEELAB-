@@ -6,10 +6,9 @@ const productVariantSchema = mongoose.Schema({
     ref: "Product",
     required: true,
   },
-  price: { type: Number, required: true },
   size: { type: String, required: true }, // kich co
   color: { type: String, required: true },
-  stock: { type: Number, required: true }, // so luong
+  stock: { type: Number, required: true }, // so luong ton kho
   sku: { type: String, unique: true }, // ma doc nhat
 });
 

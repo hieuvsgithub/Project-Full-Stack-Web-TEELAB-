@@ -5,6 +5,7 @@ const categorySchema = mongoose.Schema(
     title: { type: String, required: true },
     description: { type: String },
     products: { type: mongoose.Schema.Types.ObjectId, ref: "Product" },
+    slug: { type: String },
     isHidden: { type: Boolean, default: false },
     deleteAt: { type: Date, default: null },
   },
