@@ -1,7 +1,7 @@
-import User from "../models/User";
+import User from "../models/User.js";
 import bcryptjs from "bcryptjs";
 import jwt from "jsonwebtoken";
-import env from "../configs/config.env.js";
+import env from "../config/config.env.js";
 
 const register = async (req, res) => {
   try {
@@ -68,6 +68,7 @@ const login = async (req, res) => {
     const accessToken = jwt.sign(
       {
         _id: userExists._id,
+        role: userExists.role,
       },
       env.JWT_SECRET,
       { expiresIn: env.JWT_EXPIRES_IN }

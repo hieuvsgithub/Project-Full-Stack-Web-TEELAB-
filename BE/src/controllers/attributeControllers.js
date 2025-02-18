@@ -1,4 +1,4 @@
-import Attribute from "../models/Attribute";
+import Attribute from "../models/Attribute.js";
 
 const errorReportServer = (res, error) => {
   return res

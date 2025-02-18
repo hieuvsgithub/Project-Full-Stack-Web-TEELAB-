@@ -34,7 +34,7 @@ const getByIdCategory = async (req, res) => {
 };
 const createCategory = async (req, res) => {
   try {
-    const { title, description } = req.body;
+    const { title, description, slug } = req.body;
     if (!title) {
       return res.status(400).send({ message: "loi ten danh muc" });
     }
@@ -42,7 +42,7 @@ const createCategory = async (req, res) => {
     if (categoryExists) {
       return res.status(400).send({ message: "danh muc da ton tai" });
     }
-    const newCategory = await Category.create({ title, description });
+    const newCategory = await Category.create({ title, description, slug });
     return res
       .status(201)
       .send({ message: "Them danh muc thanh cong", newCategory });
@@ -63,7 +63,7 @@ const updateCategory = async (req, res) => {
 
     const newCategory = await Category.findByIdAndUpdate(
       req.params.id,
-      { title, deleteSoftCategory },
+      { title, description },
       { new: true }
     );
 
@@ -78,7 +78,7 @@ const updateCategory = async (req, res) => {
 const removeCategory = async (req, res, next) => {
   try {
     const id = req.params.id;
-    if (id === env.CATEGORY_ID_DEFAULT) {
+    if (id.toString() === env.CATEGORY_ID_DEFAULT) {
       return next(new Error("ko the xoa danh muc mac dinh"));
     }
     const category = await Category.findByIdAndDelete(id);
@@ -86,16 +86,16 @@ const removeCategory = async (req, res, next) => {
       return res.status(404).send({ message: "ko tim thay danh muc muon xoa" });
     }
     // cap nhan san pham tu danh muc bi xoa sang danh muc mac dinh
-    await Product.updateMany({
-      categoryId: id,
-      categoryId: env.CATEGORY_ID_DEFAULT,
-    });
+    await Product.updateMany(
+      { categoryId: id },
+      { categoryId: env.CATEGORY_ID_DEFAULT }
+    );
     // cap nhat danh muc mac dinh
-    await Category.updateOne({
-      _id: env.CATEGORY_ID_DEFAULT,
-      $push: { products: { $each: category.products } },
-    });
-    return res.status(200).json(category);
+    await Category.updateOne(
+      { _id: env.CATEGORY_ID_DEFAULT },
+      { $push: { products: { $each: category.products } } }
+    );
+    return res.status(200).send({ message: "xoa danh muc thanh cong" });
   } catch (error) {
     errorReportServer(res, error);
   }
